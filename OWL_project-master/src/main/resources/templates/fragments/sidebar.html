@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- Sidebar Fragment -->
+<nav th:fragment="sidebar" id="sidebar-wrapper"
+    class="w-72 h-full bg-slate-900/95 backdrop-blur-xl border-r border-white/5 flex flex-col fixed md:relative z-30 transition-transform duration-300 -translate-x-full md:translate-x-0 shadow-2xl">
+
+    <!-- Logo Section -->
+    <div
+        class="h-20 flex items-center px-6 border-b border-white/5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900">
+        <a href="/" class="flex items-center gap-3 group">
+            <div
+                class="relative w-10 h-10 flex items-center justify-center bg-indigo-500/20 rounded-xl group-hover:bg-indigo-500/30 transition-all duration-500">
+                <i
+                    class="fas fa-moon text-indigo-400 text-xl group-hover:rotate-12 transition-transform duration-500"></i>
+                <div
+                    class="absolute inset-0 bg-indigo-500/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                </div>
+            </div>
+            <div>
+                <h1 class="text-white font-bold text-lg tracking-tight leading-none">OWL Project</h1>
+                <p class="text-slate-500 text-[10px] font-medium tracking-wider mt-0.5">LATE NIGHT FINDER</p>
+            </div>
+        </a>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex-1 overflow-y-auto py-6 px-4 space-y-8 custom-scrollbar">
+
+        <!-- Main Group -->
+        <div>
+            <h3 class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest mb-3"
+                style="font-family: 'Inter', sans-serif;">Discover</h3>
+            <ul class="space-y-1">
+                <li>
+                    <a href="javascript:void(0);" onclick="replaceMapWithRestaurant()"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-200 group">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400 group-hover:bg-orange-500/20 transition-colors">
+                            <i class="fas fa-utensils text-sm"></i>
+                        </span>
+                        <span class="font-medium">음식점</span>
+                        <i
+                            class="fas fa-chevron-right text-[10px] ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-slate-600"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" onclick="replaceMapWithCafe()"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-200 group">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 group-hover:bg-amber-500/20 transition-colors">
+                            <i class="fas fa-coffee text-sm"></i>
+                        </span>
+                        <span class="font-medium">카페</span>
+                        <i
+                            class="fas fa-chevron-right text-[10px] ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-slate-600"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" onclick="replaceMapWithBar()"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-200 group">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/20 transition-colors">
+                            <i class="fas fa-glass-martini-alt text-sm"></i>
+                        </span>
+                        <span class="font-medium">술집</span>
+                        <i
+                            class="fas fa-chevron-right text-[10px] ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-slate-600"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Features Group -->
+        <div>
+            <h3 class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest mb-3"
+                style="font-family: 'Inter', sans-serif;">Features</h3>
+            <ul class="space-y-1">
+                <li>
+                    <a href="javascript:void(0);" onclick="replaceMapWithRoulette()"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-200 group">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
+                            <i class="fas fa-dharmachakra text-sm"></i>
+                        </span>
+                        <span class="font-medium">메뉴 룰렛</span>
+                        <span
+                            class="ml-auto px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">NEW</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Community Group -->
+        <div>
+            <h3 class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest mb-3"
+                style="font-family: 'Inter', sans-serif;">Community</h3>
+            <ul class="space-y-1">
+                <li th:if="${#strings.isEmpty(session.loginEmail)}">
+                    <a onclick="showAlert()"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 cursor-pointer transition-all duration-200 group">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
+                            <i class="fas fa-lock text-sm"></i>
+                        </span>
+                        <span class="font-medium">자유게시판</span>
+                    </a>
+                </li>
+                <li th:if="${not #strings.isEmpty(session.loginEmail)}">
+                    <a href="javascript:void(0);" onclick="boardClick()"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-indigo-600/10 to-transparent text-indigo-300 border border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-200 group">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-sm">
+                            <i class="fas fa-comment-dots text-sm"></i>
+                        </span>
+                        <span class="font-medium">자유게시판</span>
+                        <i
+                            class="fas fa-arrow-right text-[10px] ml-auto transform group-hover:translate-x-1 transition-transform text-indigo-400"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- User Section / Footer -->
+    <div class="p-4 border-t border-white/5 bg-slate-900/50">
+        <div th:if="${#strings.isEmpty(session.loginEmail)}"
+            class="bg-slate-800/50 rounded-xl p-4 border border-white/5 text-center">
+            <h4 class="text-white text-sm font-semibold mb-1">로그인이 필요해요</h4>
+            <p class="text-slate-500 text-xs mb-3">더 많은 기능을 사용해보세요!</p>
+            <a th:href="@{/member/login}"
+                class="block w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-colors shadow-lg shadow-indigo-500/20">
+                로그인 하기
+            </a>
+        </div>
+
+        <div th:if="${not #strings.isEmpty(session.loginEmail)}"
+            class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group relative">
+            <div
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
+                <span th:text="${#strings.substring(session.loginName, 0, 1)}">A</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-white text-sm font-semibold truncate" th:text="${session.loginName}">User</p>
+                <p class="text-slate-500 text-xs truncate" th:text="${session.loginEmail}">user@email.com</p>
+            </div>
+            <a th:href="@{/member/logout}" class="p-2 text-slate-400 hover:text-white transition-colors" title="로그아웃">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </div>
+
+</nav>
+
+</html>

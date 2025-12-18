@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글 상세보기 - 심야식당 OWL</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        night: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                        },
+                        brand: {
+                            accent: '#6366f1',
+                            danger: '#ef4444',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Typography for user generated content */
+        .prose {
+            color: #d1d5db;
+            /* slate-300 */
+            line-height: 1.75;
+        }
+
+        .prose p {
+            margin-bottom: 1em;
+        }
+
+        .prose img {
+            max-width: 100%;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8 flex justify-center">
+
+    <div class="w-full max-w-4xl relative">
+
+        <!-- Back Button -->
+        <a th:href="@{/board/list}"
+            class="inline-flex items-center text-slate-400 hover:text-white mb-6 transition-colors group">
+            <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i> 목록으로 돌아가기
+        </a>
+
+        <!-- Content Card -->
+        <div class="bg-slate-800/50 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl overflow-hidden">
+
+            <!-- Header -->
+            <div class="p-8 border-b border-white/5">
+                <h1 class="text-3xl md:text-4xl font-bold text-white mb-4" th:text="${board.title}"></h1>
+                <div class="flex items-center text-sm text-slate-400 gap-4">
+                    <span class="flex items-center gap-2"><i class="fas fa-hashtag text-brand-accent"></i> <span
+                            th:text="${board.id}"></span></span>
+                    <!-- Add date or author if available in board object -->
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="p-8 min-h-[300px]">
+                <div class="prose" th:utext="${board.content}"></div>
+
+                <!-- File Attachment -->
+                <div th:if="${board.filepath != null}" class="mt-8 pt-6 border-t border-white/5">
+                    <p class="text-sm text-slate-400 mb-2">첨부파일</p>
+                    <a th:href="@{${board.filepath}}"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-200 rounded-lg transition-colors text-sm border border-white/5">
+                        <i class="fas fa-download text-brand-accent"></i> 다운로드
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="p-6 bg-slate-900/30 border-t border-white/5 flex justify-end gap-3">
+                <!-- Only author can edit -->
+                <a th:if="${session.loginEmail == board.writer}" th:href="@{/board/modify/{id}(id=${board.id})}"
+                    class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium transition-colors border border-white/5">
+                    <i class="fas fa-edit mr-1"></i> 수정
+                </a>
+                <!-- Author or Admin can delete -->
+                <a th:if="${session.loginEmail == board.writer or #authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+                    th:href="@{/board/delete(id=${board.id})}" onclick="return confirm('정말 삭제하시겠습니까?');"
+                    class="px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 text-sm font-medium transition-colors border border-red-500/20">
+                    <i class="fas fa-trash-alt mr-1"></i> 삭제
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

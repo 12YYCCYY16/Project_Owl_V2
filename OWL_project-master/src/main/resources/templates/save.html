@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 심야식당 OWL</title>
+    <!-- Fonts & Tailwind -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        night: { 900: '#0f172a', 800: '#1e293b' },
+                        brand: { accent: '#6366f1', success: '#10b981', danger: '#ef4444' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+</head>
+
+<body class="bg-slate-900 flex items-center justify-center min-h-screen py-10">
+    <div
+        class="relative z-10 w-full max-w-md p-8 bg-slate-800/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl mx-4">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-white mb-1">회원가입</h2>
+        </div>
+        <form action="/member/save" method="post" class="space-y-4" onsubmit="return validateForm()">
+            <!-- Email -->
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">이메일</label>
+                <div class="flex gap-2">
+                    <input type="text" name="memberEmail" id="memberEmail" placeholder="email@example.com"
+                        class="flex-1 px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-accent">
+                    <button type="button" onclick="sendVerification()" id="sendBtn"
+                        class="px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl whitespace-nowrap transition-colors">
+                        인증번호 전송
+                    </button>
+                </div>
+                <p id="check-result" class="text-xs mt-2 min-h-[1.5em]"></p>
+            </div>
+
+            <!-- Verification Code -->
+            <div id="verification-area" class="hidden">
+                <label class="block text-sm font-medium text-slate-300 mb-1">인증번호</label>
+                <div class="flex gap-2">
+                    <input type="text" id="verifyCode" placeholder="6자리 코드"
+                        class="flex-1 px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-accent">
+                    <button type="button" onclick="checkCode()"
+                        class="px-4 py-3 bg-brand-accent hover:bg-indigo-600 text-white rounded-xl whitespace-nowrap transition-colors">
+                        확인
+                    </button>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">비밀번호</label>
+                <input type="password" name="memberPassword" placeholder="••••••••"
+                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-accent">
+            </div>
+            <!-- Name -->
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">이름</label>
+                <input type="text" name="memberName" placeholder="홍길동"
+                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-accent">
+            </div>
+
+            <button type="submit" id="submitBtn" disabled
+                class="w-full bg-slate-600 text-slate-300 font-semibold py-3 px-4 rounded-xl mt-2 cursor-not-allowed transition-all">
+                이메일 인증이 필요합니다
+            </button>
+        </form>
+    </div>
+
+    <script>
+        let isVerified = false;
+
+        function sendVerification() {
+            const email = document.getElementById("memberEmail").value;
+            if (!email) { alert("이메일을 입력하세요."); return; }
+
+            $("#sendBtn").text("전송 중...").prop("disabled", true);
+
+            $.ajax({
+                type: "post",
+                url: "/mail/send",
+                data: { "email": email },
+                success: function (res) {
+                    alert("인증번호가 전송되었습니다.");
+                    $("#verification-area").removeClass("hidden");
+                    $("#sendBtn").text("재전송").prop("disabled", false);
+                },
+                error: function () {
+                    alert("이메일 전송 실패. 주소를 확인하세요.");
+                    $("#sendBtn").text("인증번호 전송").prop("disabled", false);
+                }
+            });
+        }
+
+        function checkCode() {
+            const code = document.getElementById("verifyCode").value;
+            $.ajax({
+                type: "post",
+                url: "/mail/verify",
+                data: { "code": code },
+                success: function (res) {
+                    if (res === "ok") {
+                        alert("인증되었습니다.");
+                        isVerified = true;
+                        $("#verification-area").remove();
+                        $("#memberEmail").prop("readonly", true).addClass("opacity-50");
+                        $("#sendBtn").remove();
+                        $("#submitBtn").removeClass("bg-slate-600 text-slate-300 cursor-not-allowed")
+                            .addClass("bg-brand-accent hover:bg-indigo-600 text-white cursor-pointer")
+                            .text("가입하기").prop("disabled", false);
+                    } else {
+                        alert("인증번호가 일치하지 않습니다.");
+                    }
+                }
+            });
+        }
+
+        function validateForm() {
+            if (!isVerified) {
+                alert("이메일 인증을 완료해주세요.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+
+</html>

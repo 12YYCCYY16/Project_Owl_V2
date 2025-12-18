@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시물 리스트 - 심야식당 OWL</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+          },
+          colors: {
+            night: {
+              900: '#0f172a',
+              800: '#1e293b',
+            },
+            brand: {
+              accent: '#6366f1',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
+
+  <div class="max-w-4xl mx-auto">
+
+    <!-- Header Area -->
+    <div class="flex justify-between items-end mb-6 border-b border-white/10 pb-4">
+      <div>
+        <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">자유 게시판
+        </h1>
+        <p class="text-slate-400 text-sm mt-1">심야식당의 다양한 이야기를 나눠보세요.</p>
+      </div>
+      <a th:href="@{/board/write}"
+        class="bg-brand-accent hover:bg-indigo-600 text-white px-5 py-2.5 rounded-lg shadow-lg shadow-indigo-500/20 font-medium transition-all flex items-center gap-2">
+        <i class="fas fa-pen"></i> 글쓰기
+      </a>
+    </div>
+
+    <!-- Search Bar -->
+    <form th:action="@{/board/list}" method="get" class="mb-6">
+      <div class="relative max-w-sm">
+        <input type="text" name="searchKeyword" placeholder="검색어를 입력하세요..."
+          class="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-4 pr-12 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent transition-all text-sm placeholder-slate-500 text-white">
+        <button type="submit" class="absolute right-2 top-1.5 p-1 text-slate-400 hover:text-white transition-colors">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </form>
+
+    <!-- Board List Table -->
+    <div class="bg-slate-800/50 backdrop-blur-sm border border-white/5 rounded-xl overflow-hidden shadow-xl">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-800 border-b border-white/10 text-slate-400 text-sm uppercase tracking-wider">
+            <th class="p-4 w-20 text-center font-semibold">No.</th>
+            <th class="p-4 font-semibold">제목</th>
+            <th class="p-4 w-32 font-semibold text-center">작성자</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr th:each="board : ${list}" class="hover:bg-slate-700/30 transition-colors group">
+            <td class="p-4 text-center text-slate-500 font-mono text-sm" th:text="${board.id}"></td>
+            <td class="p-4">
+              <a th:href="@{/board/view(id=${board.id})}"
+                class="flex items-center gap-2 group-hover:text-brand-accent transition-colors">
+                <span th:text="${board.title}" class="font-medium text-slate-200"></span>
+                <i th:if="${board.filename != null}" class="fas fa-paperclip text-slate-500 text-xs"></i>
+              </a>
+            </td>
+            <td class="p-4 text-center text-slate-400 text-sm">
+              <div class="flex items-center justify-center gap-2">
+                <div
+                  class="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-xs">
+                  <i class="fas fa-user"></i>
+                </div>
+                <span th:text="${board.nickname}"></span>
+              </div>
+            </td>
+          </tr>
+          <!-- Empty State -->
+          <tr th:if="${#lists.isEmpty(list)}">
+            <td colspan="3" class="p-12 text-center text-slate-500">
+              <div class="flex flex-col items-center gap-3">
+                <i class="fas fa-inbox text-4xl text-slate-600"></i>
+                <p>작성된 게시글이 없습니다.<br>첫 번째 글의 주인공이 되어보세요!</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-8 flex justify-center gap-2">
+      <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
+        <a th:if="${page != nowPage}" th:href="@{/board/list(page=${page - 1}, searchKeyword=${param.searchKeyword})}"
+          th:text="${page}"
+          class="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-all text-sm"></a>
+        <strong th:if="${page == nowPage}" th:text="${page}"
+          class="w-10 h-10 flex items-center justify-center rounded-lg bg-brand-accent text-white shadow-lg shadow-indigo-500/30 font-medium text-sm"></strong>
+      </th:block>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

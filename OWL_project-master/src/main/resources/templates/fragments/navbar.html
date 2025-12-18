@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- Modern Floating Navbar -->
+<nav th:fragment="navbar" class="fixed top-0 left-0 w-full z-50 pointer-events-none">
+
+    <!-- Top Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-start justify-between">
+
+        <!-- Logo (Top Left) -->
+        <!-- Logo Removed -->
+        <div class="hidden md:block"></div>
+
+        <!-- Desktop Central Navigation (Floating Pill) -->
+        <div
+            class="hidden md:flex pointer-events-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-full p-1.5 shadow-xl gap-1 absolute left-1/2 -translate-x-1/2 mt-2">
+
+            <button onclick="replaceMapWithRestaurant(this)"
+                class="nav-item px-5 py-2.5 rounded-full text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
+                <i class="fas fa-utensils text-xs"></i> <span>맛집</span>
+            </button>
+            <button onclick="replaceMapWithCafe(this)"
+                class="nav-item px-5 py-2.5 rounded-full text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
+                <i class="fas fa-coffee text-xs"></i> <span>카페</span>
+            </button>
+            <button onclick="replaceMapWithBar(this)"
+                class="nav-item px-5 py-2.5 rounded-full text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
+                <i class="fas fa-glass-martini-alt text-xs"></i> <span>술집</span>
+            </button>
+
+            <div class="w-px h-6 bg-white/10 my-auto mx-1"></div>
+
+            <button onclick="replaceMapWithRoulette(this)"
+                class="nav-item px-5 py-2.5 rounded-full text-sm font-medium text-emerald-400 hover:bg-emerald-500/10 transition-all flex items-center gap-2">
+                <i class="fas fa-dharmachakra text-xs"></i> <span>룰렛</span>
+            </button>
+
+            <div class="w-px h-6 bg-white/10 my-auto mx-1"></div>
+
+            <button th:if="${not #strings.isEmpty(session.loginEmail)}" onclick="boardClick(this)"
+                class="nav-item px-5 py-2.5 rounded-full text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
+                <i class="fas fa-comment-dots text-xs"></i> <span>게시판</span>
+            </button>
+            <button th:if="${#strings.isEmpty(session.loginEmail)}" onclick="showAlert()"
+                class="nav-item px-5 py-2.5 rounded-full text-sm font-medium text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
+                <i class="fas fa-lock text-xs"></i> <span>게시판</span>
+            </button>
+        </div>
+
+        <!-- User Menu (Top Right) -->
+        <div class="pointer-events-auto flex items-center gap-3">
+            <th:block th:if="${#strings.isEmpty(session.loginEmail)}">
+                <a th:href="@{/member/login}"
+                    class="bg-slate-900/80 backdrop-blur-xl border border-white/10 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-xl hover:bg-slate-800 transition-all">
+                    로그인
+                </a>
+                <a th:href="@{/member/save}"
+                    class="bg-indigo-600/90 backdrop-blur-xl text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-xl shadow-indigo-500/20 hover:bg-indigo-500 transition-all">
+                    회원가입
+                </a>
+            </th:block>
+
+            <th:block th:if="${not #strings.isEmpty(session.loginEmail)}">
+                <div
+                    class="bg-slate-900/80 backdrop-blur-xl border border-white/10 p-1.5 rounded-2xl flex items-center gap-2 shadow-xl pl-4">
+                    <div class="flex flex-col items-end mr-1">
+                        <span class="text-xs font-bold text-white leading-none"
+                            th:text="${session.loginName}">User</span>
+                        <span class="text-[10px] text-slate-400 leading-none mt-1">Member</span>
+                    </div>
+                    <a th:href="@{/member/update}"
+                        class="w-9 h-9 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 flex items-center justify-center text-indigo-400 transition-colors">
+                        <i class="fas fa-user-cog text-sm"></i>
+                    </a>
+                    <a th:href="@{/member/logout}"
+                        class="w-9 h-9 rounded-xl bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 flex items-center justify-center text-slate-400 transition-colors">
+                        <i class="fas fa-sign-out-alt text-sm"></i>
+                    </a>
+                </div>
+            </th:block>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation (Visible only on small screens) -->
+    <div
+        class="md:hidden pointer-events-auto fixed bottom-6 left-6 right-6 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-2 flex justify-between items-center z-50">
+        <button onclick="replaceMapWithRestaurant(this)"
+            class="flex-1 flex flex-col items-center py-2 text-slate-400 hover:text-white transition-colors">
+            <i class="fas fa-utensils text-lg mb-1"></i>
+            <span class="text-[10px]">맛집</span>
+        </button>
+        <button onclick="replaceMapWithCafe(this)"
+            class="flex-1 flex flex-col items-center py-2 text-slate-400 hover:text-white transition-colors">
+            <i class="fas fa-coffee text-lg mb-1"></i>
+            <span class="text-[10px]">카페</span>
+        </button>
+        <button onclick="replaceMapWithRoulette(this)" class="flex-1 -mt-8">
+            <div
+                class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-indigo-500/40 border-4 border-slate-900">
+                <i class="fas fa-dharmachakra text-xl animate-spin-slow"></i>
+            </div>
+        </button>
+        <button onclick="replaceMapWithBar(this)"
+            class="flex-1 flex flex-col items-center py-2 text-slate-400 hover:text-white transition-colors">
+            <i class="fas fa-glass-martini-alt text-lg mb-1"></i>
+            <span class="text-[10px]">술집</span>
+        </button>
+        <button th:if="${not #strings.isEmpty(session.loginEmail)}" onclick="boardClick(this)"
+            class="flex-1 flex flex-col items-center py-2 text-slate-400 hover:text-white transition-colors">
+            <i class="fas fa-comment-dots text-lg mb-1"></i>
+            <span class="text-[10px]">게시판</span>
+        </button>
+        <button th:if="${#strings.isEmpty(session.loginEmail)}" onclick="showAlert()"
+            class="flex-1 flex flex-col items-center py-2 text-slate-400 hover:text-white transition-colors">
+            <i class="fas fa-lock text-lg mb-1"></i>
+            <span class="text-[10px]">게시판</span>
+        </button>
+    </div>
+</nav>
+
+</html>

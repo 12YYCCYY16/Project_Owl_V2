@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정보수정 - 심야식당 OWL</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        night: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                        },
+                        brand: {
+                            accent: '#6366f1',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-900 flex items-center justify-center min-h-screen relative overflow-hidden">
+
+    <!-- Background Decor -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+        <div
+            class="absolute top-[-10%] right-[30%] w-[40%] h-[40%] bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20">
+        </div>
+        <div
+            class="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] bg-indigo-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20">
+        </div>
+    </div>
+
+    <!-- Update Card -->
+    <div
+        class="relative z-10 w-full max-w-md p-8 bg-slate-800/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl mx-4">
+
+        <div class="text-center mb-8">
+            <a href="/" class="inline-block transition-transform hover:scale-105">
+                <img th:src="@{/images/owl.png}" alt="Logo" class="w-14 h-14 mx-auto mb-3 drop-shadow-lg">
+            </a>
+            <h2 class="text-2xl font-bold text-white mb-1">회원 정보 수정</h2>
+            <p class="text-slate-400 text-sm">계정 정보를 업데이트하세요.</p>
+        </div>
+
+        <form action="/member/update" method="post" class="space-y-5">
+            <input type="hidden" th:value="${updateMember.id}" name="id">
+
+            <div>
+                <label for="memberEmail" class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">이메일 (변경불가)</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <input type="text" th:value="${updateMember.memberEmail}" name="memberEmail" id="memberEmail"
+                        readonly
+                        class="w-full pl-10 pr-4 py-3 bg-slate-900/30 border border-slate-700/50 rounded-xl text-slate-400 cursor-not-allowed select-none">
+                </div>
+            </div>
+
+            <div>
+                <label for="memberPassword" class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">비밀번호</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <input type="password" th:value="${updateMember.memberPassword}" name="memberPassword"
+                        id="memberPassword"
+                        class="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent text-white placeholder-slate-500 transition-all">
+                </div>
+            </div>
+
+            <div>
+                <label for="memberName" class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">이름</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <input type="text" th:value="${updateMember.memberName}" name="memberName" id="memberName"
+                        class="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent text-white placeholder-slate-500 transition-all">
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-brand-accent hover:bg-indigo-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-indigo-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                정보 수정 완료
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-white/10 text-center">
+            <div class="mt-4">
+                <a href="/" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">메인으로 돌아가기</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

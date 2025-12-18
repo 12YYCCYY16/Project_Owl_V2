@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 수정 - 심야식당 OWL</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        night: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                        },
+                        brand: {
+                            accent: '#6366f1',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Summernote Lite (No Bootstrap dependency) -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+    <style>
+        /* Override Summernote styles to fit dark mode */
+        .note-editor.note-frame {
+            border: 1px solid #334155;
+            /* slate-700 */
+            border-radius: 0.5rem;
+            background: white;
+        }
+
+        .note-toolbar {
+            background-color: #f1f5f9;
+            /* slate-100 */
+            border-bottom: 1px solid #e2e8f0;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+
+        .note-statusbar {
+            background-color: #f1f5f9;
+            border-radius: 0 0 0.5rem 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8 flex justify-center">
+
+    <div class="w-full max-w-4xl relative">
+
+        <!-- Header -->
+        <div class="mb-6 border-b border-white/10 pb-4">
+            <h1 class="text-3xl font-bold text-white">게시글 수정</h1>
+            <p class="text-slate-400 text-sm mt-1">작성한 내용을 수정합니다.</p>
+        </div>
+
+        <!-- Modify Form -->
+        <form th:action="@{/board/update/{id}(id=${board.id})}" method="post" enctype="multipart/form-data"
+            class="space-y-6">
+
+            <!-- Hidden Fields -->
+            <input type="hidden" id="writer" name="writer" th:value="${session.loginEmail}">
+            <input type="hidden" id="nickname" name="nickname" th:value="${session.loginName}">
+
+            <!-- Author (Readonly) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="author" class="block text-sm font-medium text-slate-300 mb-2">작성자</label>
+                    <div class="relative">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <input type="text" id="author" th:value="${session.loginName}" readonly
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-400 cursor-not-allowed text-sm">
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-sm font-medium text-slate-300 mb-2">제목</label>
+                    <input type="text" name="title" id="title" th:value="${board.title}" required
+                        class="w-full px-4 py-2.5 bg-slate-800 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-accent text-white placeholder-slate-500 transition-all text-sm">
+                </div>
+            </div>
+
+            <!-- Editor -->
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">내용</label>
+                <textarea name="content" id="summernote" th:text="${board.content}"></textarea>
+            </div>
+
+            <!-- File Upload (Optional: Show existing file if needed, currently just basic upload) -->
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">첨부파일 수정</label>
+                <div class="flex items-center justify-center w-full">
+                    <label for="file-upload"
+                        class="flex flex-col items-center justify-center w-full h-24 border-2 border-slate-700 border-dashed rounded-lg cursor-pointer bg-slate-800 hover:bg-slate-700/50 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6 text-slate-400">
+                            <i class="fas fa-cloud-upload-alt text-xl mb-1"></i>
+                            <p class="text-sm">파일을 변경하려면 드래그 하세요</p>
+                        </div>
+                        <input id="file-upload" name="file" type="file" class="hidden"
+                            onchange="document.getElementById('file-name').textContent = this.files[0].name" />
+                    </label>
+                </div>
+                <p id="file-name" class="mt-2 text-sm text-brand-accent"></p>
+                <p th:if="${board.filename}" class="text-xs text-slate-500 mt-1">현재 파일: <span
+                        th:text="${board.filename}"></span></p>
+            </div>
+
+
+            <!-- Actions -->
+            <div class="flex justify-end pt-4 border-t border-white/10 gap-3">
+                <a th:href="@{/board/list}"
+                    class="px-5 py-2.5 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-sm font-medium">취소</a>
+                <button type="submit"
+                    class="px-5 py-2.5 rounded-lg bg-brand-accent hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium transition-all transform hover:-translate-y-0.5">
+                    수정완료
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote({
+                height: 400,
+                lang: "ko-KR",
+                focus: false,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'help']]
+                ]
+            });
+        });
+    </script>
+
+</body>
+
+</html>

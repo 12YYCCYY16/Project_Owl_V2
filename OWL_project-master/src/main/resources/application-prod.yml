@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${AZURE_MYSQL_URL}
+    username: ${AZURE_MYSQL_USERNAME}
+    password: ${AZURE_MYSQL_PASSWORD}
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  thymeleaf:
+    cache: true
+
+server:
+  forward-headers-strategy: native
+  tomcat:
+    threads:
+      max: 50
+      min-spare: 5
+    mbeanregistry:
+      enabled: false
+

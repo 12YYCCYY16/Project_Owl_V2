@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>심야식당 OWL - Night Finder</title>
+    <link rel="icon" th:href="@{/images/owl.png}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        night: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                        },
+                        brand: {
+                            accent: '#6366f1', // Indigo 500
+                            glow: '#818cf8',
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+
+        /* Iframe Container - Full Screen */
+        #iframe-container {
+            width: 100vw;
+            /* Full Viewport Width */
+            height: 100vh;
+            /* Full Viewport Height */
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #1e293b;
+            z-index: 0;
+            /* Behind navbar */
+        }
+
+        /* Remove border/shadow for full immersion */
+
+        /* Map styling */
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Nav Item Active State */
+        .nav-item.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            font-weight: 700;
+        }
+    </style>
+
+    <!-- jQuery & Scripts -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script th:src="@{/js/login.js}"></script>
+    <script th:src="@{/js/part1.js?v=3}"></script> <!-- Bump version -->
+    <script th:src="@{/js/scripts.js}"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initAutocomplete&libraries=places&v=weekly"
+        defer></script>
+
+    <script>
+        function replaceMapWithRestaurant(el) { setActive(el); loadIframe('/function1'); }
+        function replaceMapWithCafe(el) { setActive(el); loadIframe('/function2'); }
+        function replaceMapWithBar(el) { setActive(el); loadIframe('/function3'); }
+        function replaceMapWithRoulette(el) { setActive(el); loadIframe('/roulette'); }
+        function boardClick(el) { setActive(el); loadIframe('/board/list'); }
+
+        function setActive(target) {
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            // Add to clicked element
+            if (target) target.classList.add('active');
+        }
+
+        function loadIframe(url) {
+            var container = document.getElementById('iframe-container');
+
+            // Minimal Loading Overlay (Optional)
+
+            setTimeout(() => {
+                var iframe = document.createElement('iframe');
+                iframe.src = url + '?t=' + new Date().getTime();
+
+                // When loading roulette, ensure we handle the UI correctly within the iframe
+
+                container.innerHTML = '';
+                container.appendChild(iframe);
+            }, 50);
+        }
+
+        function showAlert() {
+            if (confirm("로그인 후 이용 가능한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?")) {
+                window.location.href = '/member/login';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Directly load Restaurant view on startup
+            loadIframe('/function1');
+
+            // Manually set active state on the Restaurant button
+            // We can find it by its onclick attribute contents matching 'Restaurant'
+            const restaurantBtn = document.querySelector("button[onclick*='Restaurant']");
+            if (restaurantBtn) restaurantBtn.classList.add('active');
+        });
+    </script>
+</head>
+
+<body class="h-screen w-screen bg-slate-950 text-slate-100 overflow-hidden relative">
+
+    <!-- Modern Navbar Fragment -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Full Screen Map / Content Area -->
+    <div id="iframe-container" class="w-full h-full">
+        <div th:replace="~{fragments/fragment1 :: part1}"></div>
+    </div>
+
+</body>
+
+</html>

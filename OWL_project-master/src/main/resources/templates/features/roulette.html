@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘 뭐 먹지? - 룰렛 (OWL)</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+          },
+          colors: {
+            night: {
+              900: '#0f172a',
+              800: '#1e293b',
+            },
+            brand: {
+              accent: '#6366f1',
+              gold: '#fbbf24',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      overflow-x: hidden;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    /* Glassmorphism Panel */
+    .glass-panel {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    /* Wheel Pointer */
+    .pointer {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 50px;
+      z-index: 50;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+    }
+
+    /* Canvas Responsiveness */
+    #wheelCanvas {
+      max-width: 100%;
+      height: auto;
+      transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    /* Filter Button Active State */
+    .filter-btn.active {
+      background-color: #6366f1;
+      /* brand-accent */
+      color: white;
+      border-color: #6366f1;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+
+  <!-- Background Decoration -->
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+    <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[100px]"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[100px]">
+    </div>
+  </div>
+
+  <!-- Back Button -->
+  <a href="/"
+    class="absolute top-6 left-6 text-slate-400 hover:text-white transition-colors flex items-center gap-2 z-50">
+    <i class="fas fa-arrow-left"></i> 홈으로
+  </a>
+
+  <!-- Main Container -->
+  <div class="w-full max-w-md flex flex-col items-center gap-6 relative z-10">
+
+    <!-- Header -->
+    <div class="text-center mb-2">
+      <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-2">오늘 뭐
+        먹지?</h1>
+      <p class="text-slate-400 text-sm">주변 맛집을 룰렛으로 결정해보세요!</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="glass-panel w-full p-4 rounded-2xl">
+      <div class="flex flex-col gap-4">
+        <!-- Radius Filter -->
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">거리</span>
+          <div class="flex gap-2">
+            <button onclick="changeRadius(300, this)"
+              class="filter-btn active px-3 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 hover:border-slate-400 transition-all">300m</button>
+            <button onclick="changeRadius(500, this)"
+              class="filter-btn px-3 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 hover:border-slate-400 transition-all">500m</button>
+            <button onclick="changeRadius(1000, this)"
+              class="filter-btn px-3 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 hover:border-slate-400 transition-all">1km</button>
+          </div>
+        </div>
+        <!-- Category Filter -->
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">메뉴</span>
+          <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <button onclick="changeKeyword('', this)"
+              class="filter-btn active px-3 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 whitespace-nowrap hover:border-slate-400 transition-all">전체</button>
+            <button onclick="changeKeyword('치킨', this)"
+              class="filter-btn px-3 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 whitespace-nowrap hover:border-slate-400 transition-all">치킨</button>
+            <button onclick="changeKeyword('한식', this)"
+              class="filter-btn px-3 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 whitespace-nowrap hover:border-slate-400 transition-all">한식</button>
+            <button onclick="changeKeyword('일식', this)"
+              class="filter-btn px-3 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 whitespace-nowrap hover:border-slate-400 transition-all">일식</button>
+            <button onclick="changeKeyword('술집', this)"
+              class="filter-btn px-3 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 whitespace-nowrap hover:border-slate-400 transition-all">술집</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wheel Container -->
+    <div class="relative w-[320px] h-[320px] md:w-[380px] md:h-[380px] flex items-center justify-center">
+      <!-- Pointer -->
+      <div class="pointer">
+        <svg viewBox="0 0 40 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 50L0.5 0.5H39.5L20 50Z" fill="#F43F5E" stroke="white" stroke-width="2" />
+        </svg>
+      </div>
+
+      <canvas id="wheelCanvas" width="760" height="760" class="w-full h-full drop-shadow-2xl"></canvas>
+
+      <!-- Center Cap -->
+      <div
+        class="absolute w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-xl border-4 border-slate-200 z-10">
+        <i class="fas fa-utensils text-slate-800 text-xl"></i>
+      </div>
+    </div>
+
+    <!-- Action Button -->
+    <button id="spinBtn" onclick="spin()"
+      class="w-full py-4 bg-brand-accent hover:bg-indigo-600 text-white font-bold text-xl rounded-2xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+      <i class="fas fa-play mr-2"></i> 돌리기!
+    </button>
+
+    <!-- Status Text -->
+    <p id="statusMsg" class="text-slate-400 text-sm h-5 animate-pulse">위치 정보를 불러오는 중...</p>
+
+  </div>
+
+  <!-- Hidden Map for Places Service -->
+  <div id="map" style="display:none;"></div>
+
+  <!-- Result Modal -->
+  <div id="resultModal"
+    class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+    <div
+      class="bg-slate-800 border border-white/10 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-90 opacity-0 transition-all duration-300"
+      id="modalContent">
+      <div
+        class="w-20 h-20 bg-brand-accent/20 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-accent animate-bounce">
+        <i class="fas fa-gift text-3xl"></i>
+      </div>
+      <p class="text-slate-400 text-sm mb-1">오늘의 메뉴는</p>
+      <h2 id="winnerName" class="text-3xl font-bold text-white mb-6"></h2>
+
+      <div class="flex flex-col gap-3">
+        <a id="winnerLink" href="#" target="_blank"
+          class="w-full py-3 bg-brand-accent hover:bg-indigo-600 text-white rounded-xl font-bold shadow-lg transition-colors">
+          지도에서 보기
+        </a>
+        <button onclick="closeModal()"
+          class="w-full py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl font-medium transition-colors">
+          다시하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Maps API -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=init&libraries=places&v=weekly"
+    defer></script>
+
+  <script>
+    // Variables
+    let map;
+    let service;
+    let currentLocation = null;
+
+    // Filter Default States
+    let currentRadius = 300;
+    let currentKeyword = ''; // All
+
+    // Wheel Data
+    let places = [];
+    const colors = ['#f87171', '#fb923c', '#fbbf24', '#a3e635', '#34d399', '#22d3ee', '#818cf8', '#e879f9']; // Pastel Brights
+    const maxItems = 10;
+
+    // Canvas
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const spinBtn = document.getElementById('spinBtn');
+    const statusMsg = document.getElementById('statusMsg');
+
+    // Animation State
+    let isSpinning = false;
+    let currentRotation = 0;
+
+    function init() {
+      // init wrapper to wait for GMaps
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            currentLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            initMapService();
+          },
+          () => {
+            // Fallback: Seoul
+            currentLocation = { lat: 37.5665, lng: 126.9780 };
+            statusMsg.innerText = "위치 권한이 없어 기본 위치(서울)로 설정합니다.";
+            alert("위치 권한을 허용해야 정확한 결과를 얻을 수 있습니다.");
+            initMapService();
+          }
+        );
+      } else {
+        currentLocation = { lat: 37.5665, lng: 126.9780 };
+        initMapService();
+      }
+    }
+
+    function initMapService() {
+      // Invisible map for PlacesService
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: currentLocation,
+        zoom: 15
+      });
+      service = new google.maps.places.PlacesService(map);
+
+      // Initial Fetch
+      fetchPlaces();
+    }
+
+    function changeRadius(radius, btn) {
+      if (isSpinning) return;
+      // UI Toggle
+      btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      currentRadius = radius;
+      fetchPlaces();
+    }
+
+    function changeKeyword(keyword, btn) {
+      if (isSpinning) return;
+      // UI Toggle
+      btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      currentKeyword = keyword;
+      fetchPlaces();
+    }
+
+    function fetchPlaces() {
+      statusMsg.innerText = "주변 맛집을 탐색 중입니다...";
+      spinBtn.disabled = true;
+
+      const request = {
+        location: currentLocation,
+        radius: currentRadius,
+        type: 'restaurant',
+        openNow: true // Only open places
+      };
+
+      if (currentKeyword) {
+        request.keyword = currentKeyword;
+      }
+
+      service.nearbySearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+
+          // Shuffle and pick maxItems
+          const shuffled = results.sort(() => 0.5 - Math.random());
+          places = shuffled.slice(0, maxItems);
+
+          drawWheel();
+          statusMsg.innerText = `${places.length}개의 맛집을 찾았습니다!`;
+          spinBtn.disabled = false;
+
+        } else {
+          statusMsg.innerText = "검색 결과가 없습니다. (거리나 키워드를 변경해보세요)";
+          places = [{ name: '검색 실패' }]; // Dummy to avoid error
+          drawWheel();
+          spinBtn.disabled = true;
+        }
+      });
+    }
+
+    function drawWheel() {
+      const numSegments = places.length;
+      const arcSize = (2 * Math.PI) / numSegments;
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = canvas.width / 2 - 20; // Padding
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      places.forEach((place, i) => {
+        const angle = i * arcSize - Math.PI / 2; // Start from top (-90deg)
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+        ctx.stroke();
+
+        // Text
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#1e293b"; // Dark text
+        ctx.font = "bold 24px 'Noto Sans KR'";
+
+        // Truncate text if too long
+        let text = place.name;
+        if (text.length > 8) text = text.substring(0, 8) + '..';
+
+        ctx.fillText(text, radius - 40, 10);
+        ctx.restore();
+      });
+    }
+
+    function spin() {
+      if (isSpinning || places.length === 0) return;
+
+      isSpinning = true;
+      spinBtn.disabled = true;
+      statusMsg.innerText = "두근두근... 어디로 갈까요?";
+
+      // Random spin amount (at least 5 full spins + random offset)
+      const spinDuration = 4000; // ms
+      const wheelCanvas = document.getElementById('wheelCanvas');
+
+      // Reset transition
+      wheelCanvas.style.transition = 'none';
+      wheelCanvas.style.transform = `rotate(${currentRotation % 360}deg)`;
+
+      // Force reflow
+      void wheelCanvas.offsetWidth;
+
+      // Calculate new rotation
+      const randomOffset = Math.floor(Math.random() * 360);
+      const extraSpins = 360 * 10; // 10 spins
+      const targetRotation = currentRotation + extraSpins + randomOffset;
+
+      // Apply Spin
+      wheelCanvas.style.transition = `transform ${spinDuration}ms cubic-bezier(0.15, 0.15, 0, 1)`;
+      wheelCanvas.style.transform = `rotate(${targetRotation}deg)`;
+
+      // Result logic
+      setTimeout(() => {
+        isSpinning = false;
+        currentRotation = targetRotation;
+        spinBtn.disabled = false;
+
+        // Calculate winner
+        // The pointer is at top (0 deg visual, but actually -90 in canvas coord logic?)
+        // Actually CSS Rotate simply rotates the canvas.
+        // Pointer is FIXED at top.
+        // If we rotate 90 deg clockwise, the segment at 270 deg (Top) is now at 0 deg (Right).
+        // Wait. Let's start simple.
+
+        // Effective Angle = (targetRotation % 360). 
+        // Since pointer is at TOP (0 degrees in standard clock, -90 in math),
+        // We need to deduce which segment is currently at TOP.
+
+        const degrees = targetRotation % 360;
+        // Correct segment index logic:
+        // If 0 deg, Index 0 is at Top? No. Index 0 starts at -90 (Top) and goes clockwise.
+        // So if we rotate canvas X deg clockwise. The Top position moves Clockwise.
+        // The segment under the pointer (Top) is effectively "moved counter-clockwise" relative to canvas start.
+
+        const sliceAngle = 360 / places.length;
+        const winningIndex = Math.floor(((360 - degrees) % 360) / sliceAngle);
+
+        const winner = places[winningIndex];
+        showResult(winner);
+
+      }, spinDuration);
+    }
+
+    function showResult(place) {
+      const modal = document.getElementById('resultModal');
+      const content = document.getElementById('modalContent');
+      const nameEl = document.getElementById('winnerName');
+      const linkEl = document.getElementById('winnerLink');
+
+      nameEl.innerText = place.name;
+      // Generate Google Maps Search Link
+      const query = encodeURIComponent(place.name + " " + (place.vicinity || ""));
+      linkEl.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      // Tiny delay for animation
+      setTimeout(() => {
+        content.classList.remove('scale-90', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+      }, 50);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('resultModal');
+      const content = document.getElementById('modalContent');
+
+      content.classList.remove('scale-100', 'opacity-100');
+      content.classList.add('scale-90', 'opacity-0');
+
+      setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        statusMsg.innerText = "다시 돌려보세요!";
+      }, 300);
+    }
+
+  </script>
+</body>
+
+</html>
