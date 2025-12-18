@@ -11,12 +11,19 @@
 - **실시간 영업 정보**: Google Places API를 연동하여 현재 영업 중인 장소만 필터링하여 보여줍니다.
 - **다이나믹 반경 설정**: 100m부터 1000m까지 사용자가 원하는 반경 내의 장소를 즉시 탐색합니다.
 - **상세 정보 인터페이스**: 유리 질감(Glassmorphism) UI를 적용한 인포윈도우를 통해 영업 상태, 평점, 주소를 한눈에 확인하고 구글 검색으로 바로 연결됩니다.
+<img width="874" height="694" alt="스크린샷 2025-12-18 오후 1 22 07" src="https://github.com/user-attachments/assets/e9af353b-b35c-4e0d-aade-b4343be20a9e" />
+<img width="865" height="589" alt="스크린샷 2025-12-18 오후 1 22 18" src="https://github.com/user-attachments/assets/1729147d-3de5-4b16-ad5e-d48b225654a0" />
 
 ### 🎡 오늘 뭐 먹지? (Smart Roulette)
 - **메뉴 결정의 즐거움**: 한식, 일식, 치킨, 술집 등 카테고리별 가중치를 적용한 세련된 룰렛 애니메이션으로 메뉴 결정을 도와줍니다.
 - **인터랙티브 경험**: 부드러운 회전 효과와 시각적 피드백으로 사용자 재미를 극대화했습니다.
+<img width="638" height="788" alt="스크린샷 2025-12-18 오후 1 22 36" src="https://github.com/user-attachments/assets/774a61cd-c6fc-411d-a5cb-cfc96742c8a6" />
+<img width="545" height="794" alt="스크린샷 2025-12-18 오후 1 23 13" src="https://github.com/user-attachments/assets/3275a503-5e16-4131-837f-e22f22a32f5b" />
+<img width="636" height="663" alt="스크린샷 2025-12-18 오후 1 23 28" src="https://github.com/user-attachments/assets/d724695a-bcd4-40ef-b7ca-6e6aa1b0501d" />
+<img width="949" height="721" alt="스크린샷 2025-12-18 오후 1 23 38" src="https://github.com/user-attachments/assets/a8060d91-3ad6-44f0-959b-11af9b4f9815" />
 
 ### 🛡️ 강력한 보안 및 관리 시스템
+
 - **Spring Security 기반 인증**: 세션 기반의 견고한 보안 체계를 바탕으로 회원가입 및 로그인을 관리합니다.
 - **계층형 권한 관리 (RBAC)**: 일반 사용자(USER)와 관리자(ADMIN) 권한을 분리하여 차별화된 기능을 제공합니다.
 - **관리자 전용 기능**: 관리자 전용 대시보드를 통한 회원 강제 탈퇴, 게시글 전체 관리 기능을 포함합니다.
@@ -25,6 +32,7 @@
 - **Glassmorphism & Dark Mode**: 밤시간 사용 환경에 최적화된 Sleek한 다크 모드와 투명한 유리 질감 디자인을 채택했습니다.
 - **Floating Navbar**: 데스크탑과 모바일 환경을 모두 고려한 플로팅 네비게이션 바로 최상의 접근성을 제공합니다.
 - **반응형 웹**: 모바일 독(Dock) UI를 포함하여 모든 디바이스에서 완벽한 경험을 제공합니다.
+<img width="456" height="697" alt="스크린샷 2025-12-18 오후 1 21 42" src="https://github.com/user-attachments/assets/799bfcea-22f4-480c-a214-a2353ac8187a" />
 
 ---
 
