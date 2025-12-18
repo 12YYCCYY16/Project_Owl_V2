@@ -51,8 +51,8 @@
 |---|---|
 
 ## 룰렛과 게시판 기능
-| ![이미지 1 설명](https://github.com/realCCC/OWL_project/assets/101503824/893963b5-4b83-4feb-8f6a-84a6928ed327) | ![이미지 2 설명](https://github.com/realCCC/OWL_project/assets/101503824/6fb5ed0d-fa82-4316-8309-1ef7c12344c5) |
-|---|---|
+<img width="664" height="667" alt="스크린샷 2025-12-18 오전 11 24 12" src="https://github.com/user-attachments/assets/6fb5093b-3ebf-4bfa-883e-b988a16b1f68" />
+
 
 ## 회원정보 수정정보와 권한기능
 | ![이미지 1 설명](https://github.com/realCCC/OWL_project/assets/101503824/c8d62f89-db4a-4313-a1b5-39c448bcfba8) | ![이미지 2 설명](https://github.com/realCCC/OWL_project/assets/101503824/70394086-b464-4b86-bcd8-e29f23f0ccbf) |
